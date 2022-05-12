@@ -167,31 +167,19 @@ void Talon::ShowInfo(std::string patientName)//ƒќ–јЅќ“ј“№, чтобы из файла читали
 
 	int stringNumber = 0; //номер строчки в фале
 	int dateNumber = 1; //номер строчки в фале
+	int stringTalonSize = 0;
+	int numberOfSymbolsInTalon = 0; //итератор дл€ проверки на то, кончилс€ ли талон
+
 	std::string tempDate;
 	std::string talonString;
-	int stringTalonSize = 0;
 
-	int numberOfSymbolsInTalon = 0; //итератор дл€ проверки на то, кончилс€ ли талон
 
 	fm.createClientDir(patientName);
 	fin.open(fm.getClientDir());
 
 	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херн€
 		if (stringNumber != 0) {//все талоны в файле пациента наход€тс€ после первой строчки, поэтому первую итерацию пропускаем
-			std::stringstream ss(tempDate);// используем строковый поток
-			stringTalonSize = tempDate.size();//размер талона
-			for (numberOfSymbolsInTalon; numberOfSymbolsInTalon <= stringTalonSize;) {//читает до тех пор, пока не кончитс€ талон
-				ss >> talonString;// выпнули слово, повтор€ем в цикле, пока слова не кончатс€
-				std::cout << talonString << " ";//выводим слово
-				if (numberOfSymbolsInTalon == 0) numberOfSymbolsInTalon++; //в св€зи с тем, что в строке есть пробелы, способ немного некорректный, а вот таким хитрым костылем мы все правим =)
-				numberOfSymbolsInTalon += talonString.size();//добал€ем к итератору длину слова, которое вывели
-				numberOfSymbolsInTalon += 1; //пробел
-
-			}
-			if (numberOfSymbolsInTalon >= stringTalonSize) {
-				std::cout << std::endl; //если закончилс€ талон, делаем переход на следующую строчку
-				numberOfSymbolsInTalon = 0;
-			}
+			std::cout << "[" << stringNumber << "] " << tempDate << std::endl;
 		}
 		stringNumber++;
 

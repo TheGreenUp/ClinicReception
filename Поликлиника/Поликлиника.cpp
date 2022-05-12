@@ -38,7 +38,6 @@ int main() {
 	while (quit)
 	{
 		printUserMenu();//вывод меню для пользователя
-		doctor.checkDateInput();
 		checkUserInput(user_chosen_option); //проверка на числовой ввод
 		switch (user_chosen_option)
 		{
@@ -60,12 +59,13 @@ int main() {
 					switch (chosen_option)
 					{
 					case 1: {
-						//serveClient();
+						doctor.serveNextClient();
 						break;
 					}
 					case 2: {
 						doctor.showTimeTable();
 						system("pause");
+						system("cls");
 						break;
 					}
 					case 3: {
@@ -94,7 +94,7 @@ int main() {
 				while (patientExit)//цикл
 				{
 
-					std::cout << DELIMETER << "\n[1]Создать талон\n[2]Изменить талон\n[3]Удалить талон\n[4]Просмотреть список талонов\n[5]Просмотреть амбулаторную карту\n[6]Выход из аккаунта\n" << DELIMETER << std::endl;
+					std::cout << DELIMETER << "\n[1]Создать талон\n[2]Удалить талон\n[3]Просмотреть список талонов\n[4]Просмотреть амбулаторную карту\n[5]Выход из аккаунта\n" << DELIMETER << std::endl;
 					int chosen_option = 0;
 					std::cin >> chosen_option;
 					switch (chosen_option)
@@ -104,20 +104,17 @@ int main() {
 						break;
 					}
 					case 2: {
-						//editTalon();
+						patient.deleteTalonFromFile();
 						break;
 					}
 					case 3: {
-						//DeleteTalon();
+						patient.showTalons();
+						system("pause");
+						system("cls");
 						break;
 					}
 					case 4: {
-						patient.showTalons();
-
-						break;
-					}
-					case 5: {
-						//ShowOutpatientCard();
+						patient.showOutPatientCard();
 						break;
 					}
 					case 6: {

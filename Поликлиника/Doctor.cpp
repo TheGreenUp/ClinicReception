@@ -11,6 +11,9 @@
 std::string Doctor::getSpeciality() {
 	return this->speciality;
 }
+void Doctor::setSpeciality(std::string name) {
+	this->speciality = name;
+}
 
 void Doctor::signUp()
 {
@@ -122,8 +125,95 @@ bool Doctor::Login()
 		}
 	}
 }
-void Doctor::setSpeciality(std::string name) {
-	this->speciality = name;
+
+void Doctor::serveNextClient()
+{
+	FileManager fm;
+	std::ifstream fin;
+	std::vector<std::string> buff;
+	std::string tempDate;
+	int stringNumber = 0; //номер строчки в фале
+	int dateNumber = 1; //номер строчки в фале
+	
+	int specSymbolIterator = 0; //количество прочитанных специальных символов (всего 5) [в идеале заменить на Enum]
+
+	bool shoudEdit = true;
+	bool isSpecSymbol = false;
+	int busyPos = 0;
+	int numberOfWordsInPatientName = 0;
+	int numberOfWordInPatientPB = 0;
+
+	std::string fileDate;
+	std::string fileTime;
+	std::string fileDoctorName = this->getName();
+	std::string fileSpec;
+	std::string fileProblemDescription;
+	std::string wordInRecord;
+
+
+	fm.createDoctorDir(this->getName());
+	fin.open(fm.getDoctorDir());
+
+	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
+		busyPos = tempDate.find("Занято");
+		if (!(busyPos > 0 && busyPos < 100)) buff.push_back(tempDate);
+		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
+			if (busyPos > 0 && busyPos < 100 && shoudEdit) {//12.12.2022 | 15:30 | Занято |
+				std::stringstream ss(tempDate);
+				while (specSymbolIterator < 5) {
+					ss >> wordInRecord;
+					if (wordInRecord == "|") { isSpecSymbol = true; specSymbolIterator++; }
+					if (isSpecSymbol == false) {
+						switch (specSymbolIterator)
+						{
+						case 0: {
+							fileDate = wordInRecord;
+							break;
+						}
+						case 1: {
+							fileTime = wordInRecord;
+							break;
+						}
+						case 3: {//пропускаем  0, 1 и 2, т.к. там хранится не нужная нам информация
+							if (numberOfWordsInPatientName == 0)//если одно слово в имени, тогда заходим в этот кейс
+								fileSpec = wordInRecord;
+							else fileSpec += " " + wordInRecord;//а вот если слов больше, чем одно, тогда берем слово, которое считали первым и добавляем пробелы
+							numberOfWordsInPatientName++;//и естественно увеличиваем колиество слов в имени пациента
+							break;
+						}
+						case 4: {
+							if (numberOfWordInPatientPB == 0)									//====================//
+								fileProblemDescription = wordInRecord;							//====================//
+							else fileProblemDescription += " " + wordInRecord;					//смотри ситуацию выше//
+							numberOfWordInPatientPB++;											//====================//
+							break;																//====================//
+						}
+						default:
+							break;
+						}					
+					}
+					specSymbolIterator++;
+					isSpecSymbol = false;
+				}
+				tempDate.erase(21, 6);
+				tempDate.insert(21, "Свободен");//12.12.2023 | 16:30 | Свободен | 
+				tempDate.erase(32, 1000);
+				buff.push_back(tempDate);
+				shoudEdit = false;
+				buff.push_back(tempDate);
+			}
+	
+		}
+		stringNumber++;
+	}
+	fin.close();
+	//case 0: case 1: + doctor->getName() case 3: case 4: \n
+	// conclusion
+	// 
+	//doctor: 25.05.2022 | 09:30 | Занято | Гринь | Жопа чшца |
+	//patient: 25.05.2022 | 09:30 | Врач | Врачевание больных | Жопа чшца |
+	// 
+	//25.05.2025 | 10:00 | ИмяВрача | Специальность | ОписаниеПроблемы |
 }
 
 void Doctor::showTimeTable()
@@ -196,7 +286,7 @@ void Doctor::changeRecordDate()
 	fin.open(fm.getDoctorDir());
 
 	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
-		if (stringNumber - 2 != chosenDate) {//тут проверка, т.к. мы меняем дату, то надо, чтобы один раз не записалась дата сhosen date начинает отсчет с третьей строки, т.е. надо отнять
+		if (stringNumber - 1 != chosenDate) {//тут проверка, т.к. мы меняем дату, то надо, чтобы один раз не записалась дата сhosen date начинает отсчет с третьей строки, т.е. надо отнять
 			buff.insert(buff.begin() + stringNumber, tempDate);//записываем все данные в буферную переменную
 		}
 		if (stringNumber == 1) patientTalonDoctorSpec = tempDate;
@@ -265,12 +355,49 @@ void Doctor::changeRecordDate()
 	fin.close();//закрываем
 }
 
+void Doctor::changeRecordByPatient(std::string date, std::string time, std::string name) {
+	FileManager fm; User user;//юзер только для записи в файл
+	std::ifstream fin;//поток записи
+	std::vector<std::string> buff; //записываем весь файл сюда
+
+	//====================
+	int stringNumber = 0; //номер строчки в фале
+
+	std::string tempDate;   //вся строка записи
+
+
+	fm.createDoctorDir(name);
+	fin.open(fm.getDoctorDir());
+
+	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
+		if (!(stringNumber > 1)) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
+			buff.push_back(tempDate);//записываем все данные в буферную переменную
+			stringNumber++;
+			continue;
+		}
+		if (!(tempDate.find(date) > 0) && !(tempDate.find(date) < 1000)) {//если не нашли искомую дату 
+			buff.push_back(tempDate);//пихаем в вектор
+			stringNumber++;
+			continue;
+		}
+		if (!(tempDate.find(time) > 0) && !(tempDate.find(time) < 1000)) {//если не нашли нужное время
+			buff.push_back(tempDate);//туда его
+			stringNumber++;
+			continue;
+		}
+		tempDate.erase(21, 100); //стираем Занято и все что дальше
+		tempDate += "Свободно |";
+		buff.push_back(tempDate);//тут чето мой инсерт перестал работать, поэтому пушбэк
+	}
+	user.putInfoIntoFileDoctor(name, buff);
+}
+
 std::string Doctor::checkDateInput() {
 	int day = 0, month = 0, year = 0, hour = 0, minute = 0;
 	std::string dayS, monthS, yearS, hourS, minuteS;
 	std::string tmp;
 	std::string changedDate;
-	
+
 	int maxDays = 0;
 
 	std::cout << "Введите новый месяц: ";
@@ -280,23 +407,26 @@ std::string Doctor::checkDateInput() {
 		while (std::cin.get() != '\n');
 	}
 	monthS = std::to_string(month);//переводим int в std::string
-	monthS = "0" + monthS;//если месяц меньше 10, то добавляем ноль, чтобы получилось 04
+	if (month < 10) monthS = "0" + monthS;//если месяц меньше 10, то добавляем ноль, чтобы получилось 04
 
 	switch (month) //узнаем по месяцу количество дней
 	{
 	case 1: case 3: case 5: case 7: case 8: case 10: case 12: {
 		maxDays = 31;
+		break;
 	}
-	 case 4: case 6: case 9: case 11: {
+	case 4: case 6: case 9: case 11: {
 		maxDays = 30;
+		break;
 	}
 	default:
 		maxDays = 28;
+		break;
 	}
 
 	std::cout << "Введите новый день: ";
-	while (!(std::cin >> day) || (day <= 0 || day > 31) ) {
-		std::cout << "Введите числовое значение [1;31]: ";
+	while (!(std::cin >> day) || (day <= 0 || day > 31) || day > maxDays) {
+		std::cout << "Введите действительное числовое значение: ";
 		std::cin.clear();
 		while (std::cin.get() != '\n');
 	}

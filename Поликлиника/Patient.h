@@ -20,7 +20,9 @@ public:
 	void createTalon(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date);	//создать талон c заранее известными параметрами
 	void editTalon(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date); //перезапись талона у пациента
 	//===
-	void deleteTalonFromFile();//удалить талон из файла
+	void deleteTalonFromFile();
+	void showOutPatientCard();
+	//удалить талон из файла
 	void SortTalonByClientName();// для сортировки талонов по алфавиту по имени клиента;
 	void SortTalonByDoctorName();// для сортировки талонов по алфавиту по имени доктора;
 

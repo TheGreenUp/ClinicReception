@@ -5,6 +5,10 @@ std::string FileManager::getClientDir()
 {
 	return this->clientDir;
 }
+std::string FileManager::getOutPatientCardDir()
+{
+	return this->outPatientCardDir;
+}
 std::string FileManager::getDoctorDir()
 {
 	return this->doctorDir;
@@ -37,6 +41,18 @@ void FileManager::createDoctorDir(std::string name)
 		path += userName; //совмещаем каталог и название
 		this->doctorDir = path;//путь к файлу - в папке с названием доктор
 	}
+
+void FileManager::createOutPatientCardDir(std::string name)
+{
+	setlocale(LC_ALL, "russian");
+	std::string userName = name; //имя папки = имя доктора
+	std::string format = ".txt"; //делаем текстовое расширение
+	userName += format; //соединяем
+	_mkdir("OutPatientsCard"); //создаем папку 
+	std::string path = "OutPatientsCard\\"; //указываем путь к папке докторов
+	path += userName; //совмещаем каталог и название
+	this->outPatientCardDir = path;//путь к файлу - в папке с названием доктор
+}
 
 std::vector<std::string> FileManager::getDoctorsNames()
 {

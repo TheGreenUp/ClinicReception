@@ -67,7 +67,7 @@ void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName,std::st
 		buff.insert(buff.begin()+stringNumber, tempDate);//записываем все данные в буферную переменную
 		if (stringNumber == 1) spec = tempDate; //выхватываем специальность
 		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
-			if (stringNumber - 2 == chosenDate) { // в файле такая структура 1. пароль 2. специальность 3 и далее - расписание, поэтому отнимаем три
+			if (stringNumber - 1 == chosenDate) { // в файле такая структура 1. пароль 2. специальность 3 и далее - расписание, поэтому отнимаем три
 				tempDate.erase(21, 100); //удаляем "Свободно"
 				justDate = tempDate;
 				tempDate +=  "Занято | " + patientName + " | " + problemDescription + " |"; //меняем на "занято + имя + проблема"
@@ -82,7 +82,7 @@ void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName,std::st
 		//	return;
 		//}
 	}
-	buff[chosenDate + 2] = changedDate;
+	buff[chosenDate + 1] = changedDate;
 	fin.close();//закрываем
 	user.putInfoIntoFileDoctor(doctorName, buff);//перезаписываем
 
