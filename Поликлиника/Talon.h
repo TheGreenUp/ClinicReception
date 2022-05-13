@@ -12,10 +12,10 @@ private:
 	std::string clientName, doctorName, doctorSpec, problemDescription, date;
 public:
 	std::string GetPatientName();// для получения ФИО клиента;
-	std::string GetDoctorName();// для получения ФИО специалиста;
-
-
-	void GetInfoFromFile(std::ifstream fin);
+	std::string GetDoctorName();
+	std::string GetDoctorSpec();
+	std::string getProblemDescription();
+	// для получения ФИО специалиста;
 
 
 	void EditTalon(std::string problemDescription, std::string doctorName, std::string patientName);
@@ -27,6 +27,7 @@ public:
 	void PutTalonIntoPatientFile();
 	// для записи информации в файл;
 	void Set(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date);
+	void addTalonToOutPatientCard(std::string patientDate, std::string doctorName, std::string doctorSpec, std::string problemDescription);
 	// для указания необходимых данных при создании нового талона;
 	void ShowInfo(std::string patientName);// для просмотра талона;
 	

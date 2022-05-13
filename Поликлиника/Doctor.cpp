@@ -61,7 +61,6 @@ void Doctor::signUp()
 		}
 	}
 }
-
 bool Doctor::Login()
 {
 	FileManager fmanager;//для проверки путя
@@ -124,96 +123,6 @@ bool Doctor::Login()
 			}
 		}
 	}
-}
-
-void Doctor::serveNextClient()
-{
-	FileManager fm;
-	std::ifstream fin;
-	std::vector<std::string> buff;
-	std::string tempDate;
-	int stringNumber = 0; //номер строчки в фале
-	int dateNumber = 1; //номер строчки в фале
-	
-	int specSymbolIterator = 0; //количество прочитанных специальных символов (всего 5) [в идеале заменить на Enum]
-
-	bool shoudEdit = true;
-	bool isSpecSymbol = false;
-	int busyPos = 0;
-	int numberOfWordsInPatientName = 0;
-	int numberOfWordInPatientPB = 0;
-
-	std::string fileDate;
-	std::string fileTime;
-	std::string fileDoctorName = this->getName();
-	std::string fileSpec;
-	std::string fileProblemDescription;
-	std::string wordInRecord;
-
-
-	fm.createDoctorDir(this->getName());
-	fin.open(fm.getDoctorDir());
-
-	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
-		busyPos = tempDate.find("Занято");
-		if (!(busyPos > 0 && busyPos < 100)) buff.push_back(tempDate);
-		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
-			if (busyPos > 0 && busyPos < 100 && shoudEdit) {//12.12.2022 | 15:30 | Занято |
-				std::stringstream ss(tempDate);
-				while (specSymbolIterator < 5) {
-					ss >> wordInRecord;
-					if (wordInRecord == "|") { isSpecSymbol = true; specSymbolIterator++; }
-					if (isSpecSymbol == false) {
-						switch (specSymbolIterator)
-						{
-						case 0: {
-							fileDate = wordInRecord;
-							break;
-						}
-						case 1: {
-							fileTime = wordInRecord;
-							break;
-						}
-						case 3: {//пропускаем  0, 1 и 2, т.к. там хранится не нужная нам информация
-							if (numberOfWordsInPatientName == 0)//если одно слово в имени, тогда заходим в этот кейс
-								fileSpec = wordInRecord;
-							else fileSpec += " " + wordInRecord;//а вот если слов больше, чем одно, тогда берем слово, которое считали первым и добавляем пробелы
-							numberOfWordsInPatientName++;//и естественно увеличиваем колиество слов в имени пациента
-							break;
-						}
-						case 4: {
-							if (numberOfWordInPatientPB == 0)									//====================//
-								fileProblemDescription = wordInRecord;							//====================//
-							else fileProblemDescription += " " + wordInRecord;					//смотри ситуацию выше//
-							numberOfWordInPatientPB++;											//====================//
-							break;																//====================//
-						}
-						default:
-							break;
-						}					
-					}
-					specSymbolIterator++;
-					isSpecSymbol = false;
-				}
-				tempDate.erase(21, 6);
-				tempDate.insert(21, "Свободен");//12.12.2023 | 16:30 | Свободен | 
-				tempDate.erase(32, 1000);
-				buff.push_back(tempDate);
-				shoudEdit = false;
-				buff.push_back(tempDate);
-			}
-	
-		}
-		stringNumber++;
-	}
-	fin.close();
-	//case 0: case 1: + doctor->getName() case 3: case 4: \n
-	// conclusion
-	// 
-	//doctor: 25.05.2022 | 09:30 | Занято | Гринь | Жопа чшца |
-	//patient: 25.05.2022 | 09:30 | Врач | Врачевание больных | Жопа чшца |
-	// 
-	//25.05.2025 | 10:00 | ИмяВрача | Специальность | ОписаниеПроблемы |
 }
 
 void Doctor::showTimeTable()
@@ -354,7 +263,6 @@ void Doctor::changeRecordDate()
 	}
 	fin.close();//закрываем
 }
-
 void Doctor::changeRecordByPatient(std::string date, std::string time, std::string name) {
 	FileManager fm; User user;//юзер только для записи в файл
 	std::ifstream fin;//поток записи
@@ -391,7 +299,6 @@ void Doctor::changeRecordByPatient(std::string date, std::string time, std::stri
 	}
 	user.putInfoIntoFileDoctor(name, buff);
 }
-
 std::string Doctor::checkDateInput() {
 	int day = 0, month = 0, year = 0, hour = 0, minute = 0;
 	std::string dayS, monthS, yearS, hourS, minuteS;
@@ -462,4 +369,136 @@ std::string Doctor::checkDateInput() {
 
 	changedDate = dayS + "." + monthS + "." + yearS + " | " + hourS + ":" + minuteS;
 	return changedDate;
+}
+
+
+void Doctor::serveNextClient()
+{
+	FileManager fm;
+	std::ifstream fin;
+	std::vector<std::string> buff;
+	//======================
+	int stringNumber = 0; //номер строчки в фале
+	int chosenTalon = 0; //номер строчки в фале
+	int specSymbolIterator = 0; //количество прочитанных специальных символов (всего 5) [в идеале заменить на Enum]
+	//======================
+	bool shoudEdit = true;
+	bool isSpecSymbol = false;
+	//======================
+	int busyPos = 0;
+	int numberOfWordsInPatientName = 0;
+	int numberOfWordInPatientPB = 0;
+	//======================
+	//======================
+	std::string fileDate;
+	std::string fileTime;
+	std::string filePatientName;
+	std::string fileDoctorName = this->getName();
+	std::string fileSpec;
+	std::string fileProblemDescription;
+	//======================
+	std::string wordInRecord;
+	std::string tempDate;
+
+
+	fm.createDoctorDir(this->getName());
+	fin.open(fm.getDoctorDir());
+
+	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
+		busyPos = tempDate.find("Занято");
+		if (!(busyPos > 0 && busyPos < 100) || shoudEdit == false) buff.push_back(tempDate);
+		if (stringNumber == 1) fileSpec = tempDate;
+		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
+			if (busyPos > 0 && busyPos < 100 && shoudEdit) {//12.12.2022 | 15:30 | Занято |
+				chosenTalon = stringNumber-2;
+				std::stringstream ss(tempDate);
+				while (specSymbolIterator < 5) {
+					ss >> wordInRecord;
+					if (wordInRecord == "|") { isSpecSymbol = true; specSymbolIterator++; }
+					if (isSpecSymbol == false) {
+						switch (specSymbolIterator)
+						{
+						case 0: {
+							fileDate = wordInRecord;
+							break;
+						}
+						case 1: {
+							fileTime = wordInRecord;
+							break;
+						}
+						case 3: {//пропускаем  0, 1 и 2, т.к. там хранится не нужная нам информация
+							if (numberOfWordsInPatientName == 0)//если одно слово в имени, тогда заходим в этот кейс
+								filePatientName = wordInRecord;
+							else filePatientName += " " + wordInRecord;//а вот если слов больше, чем одно, тогда берем слово, которое считали первым и добавляем пробелы
+							numberOfWordsInPatientName++;//и естественно увеличиваем колиество слов в имени пациента
+							break;
+						}
+						case 4: {
+							if (numberOfWordInPatientPB == 0)									//====================//
+								fileProblemDescription = wordInRecord;							//====================//
+							else fileProblemDescription += " " + wordInRecord;					//смотри ситуацию выше//
+							numberOfWordInPatientPB++;											//====================//
+							break;																//====================//
+						}
+						default:
+							break;
+						}					
+					}
+					isSpecSymbol = false;
+				}
+				tempDate.erase(21, 6);
+				tempDate.insert(21, "Свободен");//12.12.2023 | 16:30 | Свободен | 
+				tempDate.erase(32, 1000);
+				buff.push_back(tempDate);
+				shoudEdit = false;
+			}
+	
+		}
+		stringNumber++;
+	}
+	fin.close();
+	if (!shoudEdit) {
+		User user;
+		Talon talon;
+		std::ofstream fout;
+		std::string pathOPCD;
+		std::string conclusion;
+
+		Patient patient;
+		patient.setName(filePatientName);
+		user.putInfoIntoFileDoctor(this->getName(), buff);//записываем измененное расписание доктору
+
+		fileDate = fileDate + " | " + fileTime + " | ";//приводим дату к необходимому формату
+		talon = addRecordToOutPatientCard(fileDate, fileDoctorName, fileSpec, fileProblemDescription);//получаем талон нужного формата
+
+		fm.createOutPatientCardDir(filePatientName);
+		fm.createClientDir(filePatientName);
+		pathOPCD = fm.getOutPatientCardDir();
+		patient.deleteTalonFromFile(chosenTalon);
+		std::cout << "Введите заключение: ";
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::getline(std::cin, conclusion);
+		OutPatientCard opc;
+		opc.AddConclusion(conclusion);
+		opc.PutInfoIntoFile(talon, pathOPCD);
+		std::cout << "Пациент успешно обслужен!\n";
+	}
+	else std::cout << "Нет пациентов в очереди!\n";
+	system("pause");
+
+
+
+	//case 0: case 1: + doctor->getName() case 3: case 4: \n
+	// conclusion
+	// 
+	//doctor: 25.05.2022 | 09:30 | Занято | Гринь | Жопа чшца |
+	//patient: 25.05.2022 | 09:30 | Врач | Врачевание больных | Жопа чшца |
+	// 
+	//25.05.2025 | 10:00 | ИмяВрача | Специальность | ОписаниеПроблемы |
+}
+Talon Doctor::addRecordToOutPatientCard(std::string patientDate, std::string doctorName, std::string doctorSpec, std::string problemDescription) {
+	Talon talon;
+	talon.addTalonToOutPatientCard(patientDate, doctorName, doctorSpec, problemDescription);
+	return talon;
+
 }

@@ -72,7 +72,7 @@ bool Patient::Login()
 		while (!successLogin) {
 
 			std::cout << "====================================";
-			std::cout << "\nВведите ваше имя: ";
+			std::cout << "\nВведите ФИО: ";
 			std::getline(std::cin, entered_name);
 			fmanager.createClientDir(entered_name);
 			fin.open(fmanager.getClientDir());
@@ -246,6 +246,51 @@ void Patient::deleteTalonFromFile() {
 		}
 		fin.close();
 	}
+
+void Patient::deleteTalonFromFile(int chosenTalon) {
+	std::ifstream fout;
+
+	FileManager fm;
+	Doctor doctor;
+
+	std::string tempDate, wordInRecord;
+	std::string date, time, doctorName;
+	std::vector<std::string> buff;
+
+	int stringNumber = 0;
+	int specSymbolIterator = 0;
+	int numberOfWordsInDoctorName = 0;
+
+	bool isSpecSymbol = false;
+
+	fm.createClientDir(this->getName());
+	fout.open(fm.getClientDir());
+
+	for (int n; std::getline(fout, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
+		if (!stringNumber) {
+			stringNumber++;
+			buff.push_back(tempDate);
+			continue;
+		}
+		if (stringNumber == chosenTalon) {
+			stringNumber++;
+			continue;
+		}
+		else {
+			buff.push_back(tempDate);
+			stringNumber++;
+
+		}
+	}
+	fout.close();
+	std::ofstream fin;
+	fin.open(fm.getClientDir());
+	for (int i = 0; i < buff.size(); i++) {
+		fin << buff[i] << std::endl;
+	}
+	fin.close();
+}
+
 
 void Patient::showOutPatientCard() {
 	FileManager fm;

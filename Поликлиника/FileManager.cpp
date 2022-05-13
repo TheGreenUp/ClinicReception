@@ -15,32 +15,40 @@ std::string FileManager::getDoctorDir()
 }
 
 void FileManager::createClientDir(std::string name)
-	{
-		setlocale(LC_ALL, "russian");
-		std::string userName = name; //имя папки = имя пользователя
-		int pos = userName.find("|"); //если находим специальный символ, то удаляем его, 
-			if (pos != -1) {//вот мы его нашли и вот, а т.к. у нас userName = name + " | "
-				userName.resize(userName.size() - 3);//удаляем три позиции
-			}
-		std::string format = ".txt"; //делаем текстовое расширение
-		userName += format; //соединяем
-		_mkdir("Patients"); //создаем папку Пациенты
-		std::string path = "Patients\\"; //указываем путь к папке пациенты
-		path += userName; //совмещаем каталог и название
-		this->clientDir = path;//путь к файлу - в папке с названием клиенты
+{
+	setlocale(LC_ALL, "russian");
+	std::string userName = name; //имя папки = имя пользователя
+	int stringLength = name.length();//длина строки
+	int pos = userName.find("|"); //если находим специальный символ, то удаляем его, 
+
+	if (pos != -1) {//вот мы его нашли и вот, а т.к. у нас userName = name + " | "
+		userName.resize(userName.size() - 3);//удаляем три позиции
+		stringLength -=3;
+	}
+	while (name[stringLength - 1] == ' ') {//если последний символ - пробел, то удаляем его
+		userName.erase(stringLength - 1, 1);//стираем пробел
+		stringLength--;//и уменьшаем длину строки
 	}
 
+	std::string format = ".txt"; //делаем текстовое расширение
+	userName += format; //соединяем
+	_mkdir("Patients"); //создаем папку Пациенты
+	std::string path = "Patients\\"; //указываем путь к папке пациенты
+	path += userName; //совмещаем каталог и название
+	this->clientDir = path;//путь к файлу - в папке с названием клиенты
+}
+
 void FileManager::createDoctorDir(std::string name)
-	{
-		setlocale(LC_ALL, "russian");
-		std::string userName = name; //имя папки = имя доктора
-		std::string format = ".txt"; //делаем текстовое расширение
-		userName += format; //соединяем
-		_mkdir("Doctors"); //создаем папку 
-		std::string path = "Doctors\\"; //указываем путь к папке докторов
-		path += userName; //совмещаем каталог и название
-		this->doctorDir = path;//путь к файлу - в папке с названием доктор
-	}
+{
+	setlocale(LC_ALL, "russian");
+	std::string userName = name; //имя папки = имя доктора
+	std::string format = ".txt"; //делаем текстовое расширение
+	userName += format; //соединяем
+	_mkdir("Doctors"); //создаем папку 
+	std::string path = "Doctors\\"; //указываем путь к папке докторов
+	path += userName; //совмещаем каталог и название
+	this->doctorDir = path;//путь к файлу - в папке с названием доктор
+}
 
 void FileManager::createOutPatientCardDir(std::string name)
 {

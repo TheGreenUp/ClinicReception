@@ -21,6 +21,7 @@ public:
 	void editTalon(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date); //перезапись талона у пациента
 	//===
 	void deleteTalonFromFile();
+	void deleteTalonFromFile(int chosenTalon);
 	void showOutPatientCard();
 	//удалить талон из файла
 	void SortTalonByClientName();// для сортировки талонов по алфавиту по имени клиента;

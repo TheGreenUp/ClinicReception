@@ -117,7 +117,7 @@ int main() {
 						patient.showOutPatientCard();
 						break;
 					}
-					case 6: {
+					case 5: {
 						patientExit = 0;
 						break;
 					}

@@ -4,70 +4,20 @@ std::string Talon::GetPatientName()
 {
 	return this->clientName;
 }
-
+std::string Talon::GetTime() {
+	return this->date;
+}
 std::string Talon::GetDoctorName()
 {
 	return this->doctorName;
 }
-
-void Talon::GetInfoFromFile(std::ifstream fin)
-{
-
+std::string Talon::GetDoctorSpec() {
+	return this->doctorSpec;
 }
-
-//void Talon::EditTalon(std::string problemDescription, std::string doctorName, std::string patientName) {
-//	FileManager fm;
-//	std::ifstream fin;//поток вывода из файлa
-//
-//	int stringNumber = 0; //номер строчки в фале
-//	int wordIterator = 0;
-//	int dateNumber = 1; //номер строчки в фале
-//	std::string tempDate;
-//	std::string talonString;
-//
-//	std::string fileDoctorName;
-//	int stringTalonSize = 0;
-//
-//	int numberOfSymbolsInTalon = 0; //итератор дл€ проверки на то, кончилс€ ли талон
-//
-//	fm.createClientDir(patientName);
-//	fin.open(fm.getClientDir());
-//
-//	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херн€
-//		if (stringNumber != 0) {//все талоны в файле пациента наход€тс€ после первой строчки, поэтому первую итерацию пропускаем
-//			std::stringstream ss(tempDate);// используем строковый поток
-//			stringTalonSize = tempDate.size();//размер талона
-//			for (numberOfSymbolsInTalon; numberOfSymbolsInTalon <= stringTalonSize;) {//читает до тех пор, пока не кончитс€ талон
-//				ss >> talonString;// выпнули слово, повтор€ем в цикле, пока слова не кончатс€
-//				switch (wordIterator)
-//				{
-//				case 0: {//перва€ строка - дата
-//					fileDoctorName = talonString;
-//					break;
-//				}
-//				}
-//
-//				std::cout << talonString << " ";//выводим слово
-//				if (numberOfSymbolsInTalon == 0) numberOfSymbolsInTalon++; //в св€зи с тем, что в строке есть пробелы, способ немного некорректный, а вот таким хитрым костылем мы все правим =)
-//				numberOfSymbolsInTalon += talonString.size();//добал€ем к итератору длину слова, которое вывели
-//				numberOfSymbolsInTalon += 1; //пробел
-//				wordIterator++;
-//
-//			}
-//			if (numberOfSymbolsInTalon >= stringTalonSize) {
-//				std::cout << std::endl; //если закончилс€ талон, делаем переход на следующую строчку
-//				numberOfSymbolsInTalon = 0;
-//			}
-//		}
-//		stringNumber++;
-//
-//
-//		if (fin.eof()) {//проверка на конец файла
-//			fin.close();//закрываем
-//			return;
-//		}
-//	}
-//}
+std::string Talon::getProblemDescription() {
+	return this->problemDescription;
+}
+//	std::string clientName, doctorName, doctorSpec, problemDescription, date;
 
 
 void Talon::PutTalonIntoPatientFile()//дозаписываем файл клиента, внос€ туда талон (запись) к врачу
@@ -95,6 +45,12 @@ void Talon::Set(std::string clientName, std::string doctorName, std::string doct
 	this->date = date;
 }
 
+void Talon::addTalonToOutPatientCard(std::string patientDate, std::string doctorName, std::string doctorSpec, std::string problemDescription) {
+	this->doctorName = doctorName + " | ";
+	this->doctorSpec = doctorSpec + " | ";
+	this->problemDescription = problemDescription + " |";
+	this->date = patientDate;
+}
 
 //==========–≈ƒј “»–ќ¬јЌ»≈ ƒќ “ќ–ќћ==========
 void Talon::editTalonByDoctor(std::string doctorName, std::string problemDescription)//дозаписываем файл клиента, внос€ туда талон (запись) к врачу
@@ -158,8 +114,6 @@ void Talon::editedSet(std::string clientName, std::string doctorName, std::strin
 	this->date = date + " | ";
 }
 //===========================================
-
-
 void Talon::ShowInfo(std::string patientName)//ƒќ–јЅќ“ј“№, чтобы из файла читались данные 
 {
 	FileManager fm;
