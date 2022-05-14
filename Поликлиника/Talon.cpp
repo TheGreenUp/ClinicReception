@@ -114,7 +114,7 @@ void Talon::editedSet(std::string clientName, std::string doctorName, std::strin
 	this->date = date + " | ";
 }
 //===========================================
-void Talon::ShowInfo(std::string patientName)//ƒќ–јЅќ“ј“№, чтобы из файла читались данные 
+bool Talon::ShowInfo(std::string patientName)//ƒќ–јЅќ“ј“№, чтобы из файла читались данные 
 {
 	FileManager fm;
 	std::ifstream fin;//поток вывода из файлa
@@ -127,6 +127,8 @@ void Talon::ShowInfo(std::string patientName)//ƒќ–јЅќ“ј“№, чтобы из файла читали
 	std::string tempDate;
 	std::string talonString;
 
+	bool areRecordsInFile = false;
+
 
 	fm.createClientDir(patientName);
 	fin.open(fm.getClientDir());
@@ -134,13 +136,13 @@ void Talon::ShowInfo(std::string patientName)//ƒќ–јЅќ“ј“№, чтобы из файла читали
 	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херн€
 		if (stringNumber != 0) {//все талоны в файле пациента наход€тс€ после первой строчки, поэтому первую итерацию пропускаем
 			std::cout << "[" << stringNumber << "] " << tempDate << std::endl;
+			areRecordsInFile = true;
 		}
 		stringNumber++;
-
-
-		if (fin.eof()) {//проверка на конец файла
-			fin.close();//закрываем
-			return;
-		}
 	}
+	if (!areRecordsInFile) {
+		std::cout << "Ќет активных талонов!\n";
+		return false;
+	}
+	else return true;
 }

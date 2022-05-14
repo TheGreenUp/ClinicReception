@@ -4,24 +4,24 @@
 
 User::User()
 {
-    this->fullName = "Неизвестен";
-    this->password = 1234;
+	this->fullName = "Неизвестен";
+	this->password = 1234;
 }
 
 void User::setName(std::string name) {
 	this->fullName = name;
 }
 void User::setPassword(int password) {
-    this->password = password;
+	this->password = password;
 }
 
 std::string User::getName()
 {
-    return this->fullName;
+	return this->fullName;
 }
 int User::getPassword()
 {
-    return this->password;
+	return this->password;
 }
 
 
@@ -42,26 +42,24 @@ void User::putInfoIntoFilePatient() {
 	out.open(path); // окрываем файл для записи
 	if (out.is_open())
 	{
-		out << this->password << std::endl;
+		out << encryptPassword(std::to_string(this->password)) << std::endl;
 	}
 	out.close();
 }
 
 void User::putInfoIntoFileDoctor(std::string spec) {
 	FileManager fmanager;
-
 	//Для расписания
 	DayTimeTable daytimetable;
 	std::vector<std::string> timetable = daytimetable.getDateVector();
 	//
-
 	fmanager.createDoctorDir(this->fullName);//создаем директорию (если она существует, то строчка игнорируется)
 	std::string path = fmanager.getDoctorDir();//берем путь нужного доктора
 	std::ofstream out;// поток для записи
 	out.open(path); // окрываем файл для записи
 	if (out.is_open())
 	{
-		out << this->password << std::endl;//вписываем пароль
+		out <<	encryptPassword(std::to_string(this->password)) << std::endl;//вписываем пароль
 		out << spec << std::endl;//специальность
 		for (int i = 0; i < 10; i++) {
 			out << timetable[i] << std::endl; //стандартный таймтейбл
@@ -70,7 +68,7 @@ void User::putInfoIntoFileDoctor(std::string spec) {
 	}
 	out.close();
 }
-void User::putInfoIntoFileDoctor(std::string doctorName,std::vector<std::string> vector) {
+void User::putInfoIntoFileDoctor(std::string doctorName, std::vector<std::string> vector) {
 	FileManager fmanager;
 
 	fmanager.createDoctorDir(doctorName);//создаем директорию (если она существует, то строчка игнорируется)
@@ -81,12 +79,41 @@ void User::putInfoIntoFileDoctor(std::string doctorName,std::vector<std::string>
 	{
 		for (int x = 0; x < vector.size(); x++) {
 			out << vector[x] << std::endl;
-		
+
 		}
 	}
 	out.close();
 }
-std::string User::hashPassword() {
-	// трампарам
-	return "ya gay";
+
+
+std::string User::encryptPassword(std::string password) {
+	for (int i = 0; (i < password.size() && password[i] != '\0'); i++)
+	{
+		if (password[i]+2 > 58) password[i] = password[i] + 2;
+	}
+	return password;
+
 }
+int User::hidePasswordInput()
+{
+	std::string password = "";
+	char ch = 0;
+	while (ch != 13 && password.size() < 9) {//character 13 is enter && максимальная длина пароля - 8 символов
+		ch = _getch();
+		if (ch > 47 && ch < 58) {//с 48 по 57 находятся ASCII коды цифр
+		password.push_back(ch);
+		std::cout << '*';
+		}
+	}
+	std::cout << std::endl;
+	return std::stol(password);
+}
+int User::decryptPassword(std::string password) {
+	for (int i = 0; (i < password.size() && password[i] != '\0'); i++) {
+		password[i] = password[i] - 2; //the key for encryption is 3 that is subtracted to ASCII value
+	}
+	int passwordEnc;
+	passwordEnc = atoi(password.c_str());
+	return passwordEnc;
+}
+

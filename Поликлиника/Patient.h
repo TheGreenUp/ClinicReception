@@ -10,7 +10,6 @@
 
 class Patient : public User
 {
-private:
 	std::vector<Talon> talons;
 	OutPatientCard card;
 public:
@@ -18,7 +17,6 @@ public:
 	
 	//====
 	void createTalon(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date);	//создать талон c заранее известными параметрами
-	void editTalon(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date); //перезапись талона у пациента
 	//===
 	void deleteTalonFromFile();
 	void deleteTalonFromFile(int chosenTalon);
@@ -32,7 +30,7 @@ public:
 
 	void getInfoFromFile();//для получения данных клиента врачом из файла;
 	void getOutPatientCard();//для получения данных клиента врачом из файла;
-	void showTalons();
+	bool showTalons();
 
 	
 	//===

@@ -8,11 +8,12 @@
 #include <Windows.h>
 
 
-void Patient::showTalons()
+bool Patient::showTalons()
 {
 
 	Talon talon;
-	talon.ShowInfo(this->getName());
+	if (talon.ShowInfo(this->getName())) return true;
+	else return false;
 
 }
 
@@ -25,15 +26,14 @@ void Patient::signUp()
 	std::cout << "\nВведите ваше ФИО: ";
 	std::getline(std::cin, name);
 	User::setName(name);
-	std::cout << "Придумайте пароль [до 10 символов]: ";
-	User::checkUserInput(password);
+	std::cout << "Придумайте пароль [до 8 символов, только цифры]: ";
+	password = User::hidePasswordInput();//меняем на (*)
 	User::setPassword(password);
 	system("cls");
 	while (quit)//переменная выхода, в цикле равна 1
 	{
 		std::cout << "Повторите пароль: ";
-		User::checkUserInput(password_repeat);
-
+		password_repeat = User::hidePasswordInput();//меняем на (*)
 		if (password == password_repeat) {
 			std::cout << "Регистрация успешно завершена!\n";
 			User::putInfoIntoFilePatient();//Записываем в файл данные
@@ -62,7 +62,7 @@ void Patient::signUp()
 bool Patient::Login()
 {
 	FileManager fmanager;//для проверки путя
-	int real_password_int = 0, enetered_password = 0, try_repeat = 0, quit = 1;
+	int enetered_password = 0, try_repeat = 0, quit = 1;
 	int successLogin = 0;//повторный ввод пользователем логина
 	std::string entered_name, real_password_string;
 	std::ifstream fin;
@@ -101,15 +101,14 @@ bool Patient::Login()
 	}
 	quit = 1;
 	std::getline(fin, real_password_string); //считывание первой строки из файла, которая является паролем
-	real_password_int = atoi(real_password_string.c_str());//преобразование из типа string в Int
 	while (quit)
 	{
-		std::cout << "Введите пароль: ";
-		User::checkUserInput(enetered_password); //ввод пароля
-
-		if (enetered_password == real_password_int) {
+		std::cout << "Введите пароль [максимум 8 символов]: ";
+		enetered_password = User::hidePasswordInput();
+		//User::checkUserInput(enetered_password); //ввод пароля
+		if (enetered_password == User::decryptPassword(real_password_string)) {
 			this->setName(entered_name);
-			this->setPassword(real_password_int);
+			this->setPassword(enetered_password);
 			return true;
 		}
 		else {
@@ -142,6 +141,12 @@ void Patient::createTalon()
 	//=====Получаем инфу о врачах======
 	doctorNames = fm.getDoctorsNames();//записываем в вектор имена всех врачей
 	//Выводим имя + специальность
+
+	if (doctorNames.size() == 0) {
+		std::cout << "Врачей нет! спят наверное...\n";
+		return;
+	}
+
 	fm.showDoctorsInfo(doctorNames); //ТУТ ТОЖЕ ОШИБКА
 	//===========ВЫВОД РАСПИСАНИЯ======
 	std::cout << "К какому врачу хотите записаться на прием?\n";
@@ -173,7 +178,7 @@ void Patient::createTalon(std::string clientName, std::string doctorName, std::s
 
 void Patient::deleteTalonFromFile() {
 	std::ifstream fout;
-	showTalons();
+	if (!showTalons()) return;//если талонов нет, то выходим
 	int chosenTalon = 0;
 	std::cout << "Введите номер талона, который хотите удалить: ";
 	std::cin >> chosenTalon;
@@ -195,12 +200,12 @@ void Patient::deleteTalonFromFile() {
 	fout.open(fm.getClientDir());
 
 	for (int n; std::getline(fout, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
-		if (!stringNumber) {
+		if (!stringNumber) {//первая строка (пароль) записываем сразу
 			stringNumber++;
 			buff.push_back(tempDate);
 			continue;
 		}
-		if (stringNumber == chosenTalon) {
+		if (stringNumber == chosenTalon) {//если нашли, то
 			std::stringstream ss(tempDate);// используем строковый поток
 
 			while (specSymbolIterator < 3) {
@@ -290,7 +295,6 @@ void Patient::deleteTalonFromFile(int chosenTalon) {
 	}
 	fin.close();
 }
-
 
 void Patient::showOutPatientCard() {
 	FileManager fm;

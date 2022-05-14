@@ -75,12 +75,6 @@ void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName,std::st
 			}
 		}
 		stringNumber++;
-		// if (fin.eof())//если конец файла - закрываем файл и выходим из функции.
-		//{
-		//	std::cout << "Вот тут!";
-		//	fin.close();                                                              //чето программе как-то побоку на эту проверку...
-		//	return;
-		//}
 	}
 	buff[chosenDate + 1] = changedDate;
 	fin.close();//закрываем

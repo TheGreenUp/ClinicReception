@@ -29,7 +29,7 @@ public:
 	void Set(std::string clientName, std::string doctorName, std::string doctorSpec, std::string problemDescription, std::string date);
 	void addTalonToOutPatientCard(std::string patientDate, std::string doctorName, std::string doctorSpec, std::string problemDescription);
 	// для указания необходимых данных при создании нового талона;
-	void ShowInfo(std::string patientName);// для просмотра талона;
+	bool ShowInfo(std::string patientName);// для просмотра талона;
 	
 };
 

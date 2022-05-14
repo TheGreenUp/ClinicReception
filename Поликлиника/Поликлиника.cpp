@@ -28,7 +28,13 @@ void checkUserInput(int& user_option) {//Проверка числового в�
 	}
 }
 
+void stopAndCLS() {
+	system("pause");
+	system("cls");
+}
+
 int main() {
+	User user;
 	SetConsoleCP(1251); //       русский язык в консоли
 	SetConsoleOutputCP(1251);//  ввод на русском языке
 	Patient patient;
@@ -94,9 +100,9 @@ int main() {
 				while (patientExit)//цикл
 				{
 
-					std::cout << DELIMETER << "\n[1]Создать талон\n[2]Удалить талон\n[3]Просмотреть список талонов\n[4]Просмотреть амбулаторную карту\n[5]Выход из аккаунта\n" << DELIMETER << std::endl;
-					int chosen_option = 0;
-					std::cin >> chosen_option;
+					std::cout << DELIMETER << "\n[1]Создать талон\n[2]Удалить талон\n[3]Просмотреть список талонов\n[4]Просмотреть амбулаторную карту\n[5]Сортировать по дате\n[6]Поиск по имени клиента\n[7]Фильтрация по занятости\n[8]Выход из аккаунта\n" << DELIMETER << std::endl;
+					int chosen_option = 0,chosen_sort_option = 0;
+					std::cin >> chosen_option;	//Добавить чек есть ли докторы, выписка что нету талонов\амбулаторной карты, импуты + сортировка
 					switch (chosen_option)
 					{
 					case 1: {
@@ -109,15 +115,31 @@ int main() {
 					}
 					case 3: {
 						patient.showTalons();
-						system("pause");
-						system("cls");
+						stopAndCLS();
 						break;
 					}
 					case 4: {
 						patient.showOutPatientCard();
+						stopAndCLS();
 						break;
 					}
 					case 5: {
+					//сортировка по дате
+
+						break;
+					}
+					case 6: {
+						//поиск по имени
+						std::string patientName;
+						std::cout << "Введите имя клиента";
+						std::cin >> patientName;
+						break;
+					}
+					case 7: {
+						//фильрация по занятости
+						break;
+					}
+					case 8: {
 						patientExit = 0;
 						break;
 					}

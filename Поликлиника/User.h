@@ -23,6 +23,8 @@ public:
 	void putInfoIntoFileDoctor(std::string doctorName,std::vector<std::string> vector);//Записать данные доктора в файл
 	void putInfoIntoFilePatient();//Записать данные пациента в файл
 	void checkUserInput(int& user_option);//Проверка на числовой ввод
-	std::string hashPassword(); //шифрование пароля в файле
+	std::string encryptPassword(std::string password); //шифрование пароля в файле
+	int decryptPassword(std::string password);
+	int hidePasswordInput();
 };
 

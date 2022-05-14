@@ -24,14 +24,16 @@ void Doctor::signUp()
 	std::cout << "\nВведите ваше ФИО: ";
 	std::getline(std::cin, name);
 	User::setName(name);//ставим введенное имя пользователю	
-	std::cout << "Придумайте пароль [до 10 символов]: ";
-	User::checkUserInput(password);//проверяем ввод пароля
+	std::cout << "Придумайте пароль [до 8 символов, только цифры]: ";
+	password = User::hidePasswordInput();//меняем на (*)
 	User::setPassword(password);//ставим пароль
+	//User::checkUserInput(password);//проверяем ввод пароля
 	system("cls");//чистим экран, чтобы пароль пропал
 	while (quit)//переменная выхода, в цикле равна 1
 	{
-		std::cout << "Повторите пароль: ";
-		User::checkUserInput(password_repeat);
+		std::cout << "Повторите пароль [максимум 8 символов]: ";
+		password_repeat = User::hidePasswordInput();//меняем на (*)
+		//User::checkUserInput(password);//проверяем ввод пароля
 
 		if (password == password_repeat) {//если после повторного ввода пароли совпали, то вводим специальность и записываем в файл
 			std::cout << "Введите Вашу специальность: ";
@@ -64,7 +66,8 @@ void Doctor::signUp()
 bool Doctor::Login()
 {
 	FileManager fmanager;//для проверки путя
-	int real_password_int = 0, enetered_password = 0, try_repeat = 0, quit = 1;
+	std::string real_password_int;
+	int enetered_password = 0, try_repeat = 0, quit = 1;
 	int successLogin = 0;//повторный ввод пользователем логина
 	std::string entered_name, real_password_string;
 	std::ifstream fin;
@@ -101,13 +104,13 @@ bool Doctor::Login()
 		}
 		quit = 1;
 		std::getline(fin, real_password_string); //считывание первой строки из файла, которая является паролем
-		real_password_int = atoi(real_password_string.c_str());//преобразование из типа string в Int
+		//real_password_int = atoi(real_password_string.c_str());//преобразование из типа string в Int
 		while (quit)
 		{
-			std::cout << "Введите пароль: ";
-			User::checkUserInput(enetered_password); //ввод пароля
-
-			if (enetered_password == real_password_int) {
+			std::cout << "Введите пароль [максимум 8 символов]: ";
+			enetered_password = User::hidePasswordInput();
+			//User::checkUserInput(enetered_password); //ввод пароля
+			if (enetered_password == User::decryptPassword(real_password_string)) {
 				this->setName(entered_name);
 				this->setPassword(enetered_password);
 				return true;
@@ -389,14 +392,14 @@ void Doctor::serveNextClient()
 	int numberOfWordsInPatientName = 0;
 	int numberOfWordInPatientPB = 0;
 	//======================
-	//======================
+	//===========Данные из файла===========
 	std::string fileDate;
 	std::string fileTime;
 	std::string filePatientName;
 	std::string fileDoctorName = this->getName();
 	std::string fileSpec;
 	std::string fileProblemDescription;
-	//======================
+	//=====================================
 	std::string wordInRecord;
 	std::string tempDate;
 
