@@ -19,8 +19,24 @@ void printUserMenu() {//функция вывода первичной инфо�
 	std::cout << DELIMETER << "\nЗдравствуйте! Чем я могу Вам помочь?\n[1] Войти как врач\n[2] Войти как пациент\n[3] Зарегестрироваться как врач\n[4] Зарегестрироваться как пациент\n[5] Выйти\n" << DELIMETER << "\n";
 }
 
+void checkPatientInput(int& user_option) {//Проверка числового ввода от [1;5]
+	while (!(std::cin >> user_option) || std::cin.get() != '\n' || user_option < 1 || user_option > 6)
+	{
+		std::cout << "Введите числовое значение [1;6]: ";
+		std::cin.clear();
+		while (std::cin.get() != '\n');
+	}
+}
+void checkDoctorInput(int& user_option) {//Проверка числового ввода от [1;5]
+	while (!(std::cin >> user_option) || std::cin.get() != '\n' || user_option < 1 || user_option > 5)
+	{
+		std::cout << "Введите числовое значение [1;5]: ";
+		std::cin.clear();
+		while (std::cin.get() != '\n');
+	}
+}
 void checkUserInput(int& user_option) {//Проверка числового ввода от [1;5]
-	while (!(std::cin >> user_option) || std::cin.get() != '\n' || user_option < 0 || user_option > 5)
+	while (!(std::cin >> user_option) || std::cin.get() != '\n' || user_option < 1 || user_option > 5)
 	{
 		std::cout << "Введите числовое значение [1;5]: ";
 		std::cin.clear();
@@ -28,7 +44,7 @@ void checkUserInput(int& user_option) {//Проверка числового в�
 	}
 }
 
-void stopAndCLS() {
+void stopAndCLS() {//останавливаем до нажатия клавиши + очищаем после экран
 	system("pause");
 	system("cls");
 }
@@ -59,26 +75,36 @@ int main() {
 				{
 					system("cls");
 					int chosen_option = 0;
-					std::cout << DELIMETER << "\n[1]Обслужить ближайшего клиента\n[2]Просмотреть расписание\n[3]Редактировать расписание\n[4]Выйти из аккаунта\n" << DELIMETER << std::endl;
+					std::cout << DELIMETER << "\n[1]Обслужить ближайшего клиента\n[2]Просмотреть расписание\n[3]Редактировать расписание\n[4]Поиск по имени клиента\n[5]Выход из аккаунта\n" << DELIMETER << std::endl;
 
-					std::cin >> chosen_option;
+					checkDoctorInput(chosen_option);
 					switch (chosen_option)
 					{
 					case 1: {
 						doctor.serveNextClient();
+						stopAndCLS();
 						break;
 					}
 					case 2: {
 						doctor.showTimeTable();
-						system("pause");
-						system("cls");
+						stopAndCLS();
 						break;
 					}
 					case 3: {
 						doctor.changeRecordDate();
+						stopAndCLS();
 						break;
 					}
+	
 					case 4: {
+						std::string patientName;
+						std::cout << "Введите имя пациента: ";
+						std::cin >> patientName;
+						doctor.showByName(patientName);
+						stopAndCLS();
+						break;
+					}
+					case 5: {
 						doctorExit = 0;
 						break;
 					}
@@ -100,17 +126,19 @@ int main() {
 				while (patientExit)//цикл
 				{
 
-					std::cout << DELIMETER << "\n[1]Создать талон\n[2]Удалить талон\n[3]Просмотреть список талонов\n[4]Просмотреть амбулаторную карту\n[5]Сортировать по дате\n[6]Поиск по имени клиента\n[7]Фильтрация по занятости\n[8]Выход из аккаунта\n" << DELIMETER << std::endl;
+					std::cout << DELIMETER << "\n[1]Создать талон\n[2]Удалить талон\n[3]Просмотреть список талонов\n[4]Сортировать талоны по дате\n[5]Просмотреть амбулаторную карту\n[6]Выход из аккаунта\n" << DELIMETER << std::endl;
 					int chosen_option = 0,chosen_sort_option = 0;
-					std::cin >> chosen_option;	//Добавить чек есть ли докторы, выписка что нету талонов\амбулаторной карты, импуты + сортировка
+					checkPatientInput(chosen_option);
 					switch (chosen_option)
 					{
 					case 1: {
 						patient.createTalon();
+						stopAndCLS();
 						break;
 					}
 					case 2: {
 						patient.deleteTalonFromFile();
+						stopAndCLS();
 						break;
 					}
 					case 3: {
@@ -119,27 +147,16 @@ int main() {
 						break;
 					}
 					case 4: {
-						patient.showOutPatientCard();
+						patient.SortTalonByDate();
 						stopAndCLS();
 						break;
 					}
 					case 5: {
-					//сортировка по дате
-
+						patient.showOutPatientCard();
+						stopAndCLS();
 						break;
 					}
 					case 6: {
-						//поиск по имени
-						std::string patientName;
-						std::cout << "Введите имя клиента";
-						std::cin >> patientName;
-						break;
-					}
-					case 7: {
-						//фильрация по занятости
-						break;
-					}
-					case 8: {
 						patientExit = 0;
 						break;
 					}

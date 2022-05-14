@@ -123,6 +123,30 @@ bool Patient::Login()
 	}
 }
 
+int Patient::checkDataInput()
+{
+	int chosenDate;
+	std::cout << "Выберите удобную дату: ";
+		while (!(std::cin >> chosenDate) || std::cin.get() != '\n' || chosenDate < 1 || chosenDate > 10)
+	{
+		std::cout << "Введите числовое значение [1;10]: ";
+		std::cin.clear();
+	}
+	return chosenDate;
+}
+
+int Patient::checkChosenDoctorInput(std::vector<std::string> doctorVector) {
+	int chosenDate;
+	int vectorSize = doctorVector.size();
+	std::cout << "К какому врачу хотите записаться на прием: ";
+	while (!(std::cin >> chosenDate) || std::cin.get() != '\n' || chosenDate < 1 || chosenDate > vectorSize)
+	{
+		std::cout << "Неверный ввод! ";
+		std::cin.clear();
+	}
+	return chosenDate;
+}
+
 void Patient::createTalon()
 {
 	int chosenDoctor = 0, chosenDate;
@@ -139,8 +163,7 @@ void Patient::createTalon()
 	std::string patientName = this->getName();
 
 	//=====Получаем инфу о врачах======
-	doctorNames = fm.getDoctorsNames();//записываем в вектор имена всех врачей
-	//Выводим имя + специальность
+	doctorNames = fm.getDoctorsNames();//записываем в вектор имена всех врачей //Выводим имя + специальность
 
 	if (doctorNames.size() == 0) {
 		std::cout << "Врачей нет! спят наверное...\n";
@@ -149,19 +172,18 @@ void Patient::createTalon()
 
 	fm.showDoctorsInfo(doctorNames); //ТУТ ТОЖЕ ОШИБКА
 	//===========ВЫВОД РАСПИСАНИЯ======
-	std::cout << "К какому врачу хотите записаться на прием?\n";
-	std::cin >> chosenDoctor;
+	chosenDoctor = checkChosenDoctorInput(doctorNames);
 	nameOfChosenDoctor = doctorNames[chosenDoctor - 1];
 	dtt.GetInfoFromFile(nameOfChosenDoctor);
 	//===============БРОНЬ=============
-	std::cout << "Выберите удобное время:\n";
-	std::cin >> chosenDate;
+	chosenDate = checkDataInput();
 	while (!dtt.checkIsFree(chosenDate, nameOfChosenDoctor)) {//если занято //ПОЧИНИТЬ
 		std::cout << "Выбранное время занято, выберите другое:\n";
 		std::cin >> chosenDate;
 	};
-	std::cout << "Опишите проблему:";
-	std::getline(std::cin.ignore(), problemDescription); //ТУТ ПРОБЛЕМА (вроде решил)
+	std::cout << "Опишите проблему: ";
+	//std::getline(std::cin, problemDescription);
+	std::getline(std::cin, problemDescription);
 	dtt.BookChosenTime(chosenDate, nameOfChosenDoctor, patientName, problemDescription, date, spec); //последние два аргумента в функции получат свои значение, т.к. передаются по ссылке
 	Talon talon;
 	talon.Set(patientName, nameOfChosenDoctor, spec, problemDescription, date);//наконец-то создаем талон
@@ -302,15 +324,45 @@ void Patient::showOutPatientCard() {
 	std::string tempDate;
 	std::ifstream fin;
 
+	bool isData = false;
+
 	fm.createOutPatientCardDir(this->getName());
 	path = fm.getOutPatientCardDir();
 	fin.open(path); 
 
 	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня 
 		std::cout << tempDate << std::endl;
+		isData = true;
 	}
 	fin.close();
+	if (!isData) std::cout << "Нет записей!\n";	
+}
+
+void Patient::SortTalonByDate()
+{
+
+	FileManager fm;
+	std::ifstream fin;//поток вывода из файлa
+
+	int stringNumber = 0; //номер строчки в фале
+	int dateNumber = 1; //номер строчки в фале
+	int stringTalonSize = 0;
+	int numberOfSymbolsInTalon = 0; //итератор для проверки на то, кончился ли талон
+
+	std::string tempDate;
+	std::string talonString;
+
+	std::vector<std::string> buff;
+
+	bool areRecordsInFile = false;
 
 
+	fm.createClientDir(this->getName());
+	fin.open(fm.getClientDir());
+
+	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
+		buff.push_back(tempDate);
+		}
 	
 }
+

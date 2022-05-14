@@ -22,14 +22,8 @@ public:
 	void deleteTalonFromFile(int chosenTalon);
 	void showOutPatientCard();
 	//удалить талон из файла
-	void SortTalonByClientName();// для сортировки талонов по алфавиту по имени клиента;
-	void SortTalonByDoctorName();// для сортировки талонов по алфавиту по имени доктора;
+	void SortTalonByDate();// для сортировки талонов по алфавиту по имени клиента;
 
-	void showTalonInfoByClientName();// для поиска талона по имени клиента;
-	void showTalonInfoByDocName();// для поиска талона по имени доктора;
-
-	void getInfoFromFile();//для получения данных клиента врачом из файла;
-	void getOutPatientCard();//для получения данных клиента врачом из файла;
 	bool showTalons();
 
 	
@@ -37,6 +31,7 @@ public:
 	void signUp();//Для регистрации пациента
 	bool Login();//Для входа пациентом
 	//===
-
+	int checkDataInput();
+	int checkChosenDoctorInput(std::vector<std::string> doctorVector);
 };
 

@@ -89,7 +89,7 @@ void User::putInfoIntoFileDoctor(std::string doctorName, std::vector<std::string
 std::string User::encryptPassword(std::string password) {
 	for (int i = 0; (i < password.size() && password[i] != '\0'); i++)
 	{
-		if (password[i]+2 > 58) password[i] = password[i] + 2;
+		password[i] = password[i] + 2;
 	}
 	return password;
 

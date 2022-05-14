@@ -24,14 +24,13 @@ void Doctor::signUp()
 	std::cout << "\nВведите ваше ФИО: ";
 	std::getline(std::cin, name);
 	User::setName(name);//ставим введенное имя пользователю	
-	std::cout << "Придумайте пароль [до 8 символов, только цифры]: ";
+	std::cout << "Придумайте пароль [максимум 8 символов, только цифры]: ";
 	password = User::hidePasswordInput();//меняем на (*)
 	User::setPassword(password);//ставим пароль
-	//User::checkUserInput(password);//проверяем ввод пароля
 	system("cls");//чистим экран, чтобы пароль пропал
 	while (quit)//переменная выхода, в цикле равна 1
 	{
-		std::cout << "Повторите пароль [максимум 8 символов]: ";
+		std::cout << "Повторите пароль: ";
 		password_repeat = User::hidePasswordInput();//меняем на (*)
 		//User::checkUserInput(password);//проверяем ввод пароля
 
@@ -374,6 +373,30 @@ std::string Doctor::checkDateInput() {
 	return changedDate;
 }
 
+void Doctor::showByName(std::string name)
+{
+	FileManager fm;
+	std::ifstream fin;
+	//======================
+	int busyPos = 0;
+	std::string tempDate;
+	bool found = false;
+
+	fm.createDoctorDir(this->getName());
+	fin.open(fm.getDoctorDir());
+
+	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
+		busyPos = tempDate.find(name);
+		if (!(busyPos > 0 && busyPos < 100)) continue;
+		std::cout << tempDate << std::endl;
+		found = true;
+	}
+	if (!found) {
+		std::cout << "Нет клиентов с таким именем!\n";
+	}
+}
+
+
 
 void Doctor::serveNextClient()
 {
@@ -413,7 +436,7 @@ void Doctor::serveNextClient()
 		if (stringNumber == 1) fileSpec = tempDate;
 		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
 			if (busyPos > 0 && busyPos < 100 && shoudEdit) {//12.12.2022 | 15:30 | Занято |
-				chosenTalon = stringNumber-2;
+				chosenTalon = stringNumber - 2;
 				std::stringstream ss(tempDate);
 				while (specSymbolIterator < 5) {
 					ss >> wordInRecord;
@@ -445,7 +468,7 @@ void Doctor::serveNextClient()
 						}
 						default:
 							break;
-						}					
+						}
 					}
 					isSpecSymbol = false;
 				}
@@ -455,7 +478,7 @@ void Doctor::serveNextClient()
 				buff.push_back(tempDate);
 				shoudEdit = false;
 			}
-	
+
 		}
 		stringNumber++;
 	}
@@ -487,17 +510,6 @@ void Doctor::serveNextClient()
 		std::cout << "Пациент успешно обслужен!\n";
 	}
 	else std::cout << "Нет пациентов в очереди!\n";
-	system("pause");
-
-
-
-	//case 0: case 1: + doctor->getName() case 3: case 4: \n
-	// conclusion
-	// 
-	//doctor: 25.05.2022 | 09:30 | Занято | Гринь | Жопа чшца |
-	//patient: 25.05.2022 | 09:30 | Врач | Врачевание больных | Жопа чшца |
-	// 
-	//25.05.2025 | 10:00 | ИмяВрача | Специальность | ОписаниеПроблемы |
 }
 Talon Doctor::addRecordToOutPatientCard(std::string patientDate, std::string doctorName, std::string doctorSpec, std::string problemDescription) {
 	Talon talon;

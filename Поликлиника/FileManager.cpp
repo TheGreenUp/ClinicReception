@@ -89,21 +89,25 @@ void FileManager::showDoctorsInfo(std::vector<std::string> doctorNames) {
 	FileManager fm;//файлменеджер для открытия папок
 	std::string spec;//специальность врача
 
+	int i = 0;
+
 	{
-		for (int i = 0; i < doctorNames.size(); i++) {//проходимся по именам всех докторов
+		for (int x = 0; x < doctorNames.size(); x++) {//проходимся по именам всех докторов
 			{
-				std::cout << "[" << i + 1 << "]" << " "; //выводим номер
-				std::cout << doctorNames[i] << "\t";//выводим имя
+				std::cout << "[" << x + 1 << "]" << " "; //выводим номер
+				std::cout << std::setw(30) << std::left << doctorNames[x] << "\t" << std::setw(50) <<std::left;//выводим имя
 
 				//считываем специальность
-				fm.createDoctorDir(doctorNames[i]);
+				fm.createDoctorDir(doctorNames[x]);
 				fin.open(fm.getDoctorDir());
-				for (int i = 0; i < 2; i++) {//нас интересует вторая строчка, поэтому цикл только сработает дважды
+				for (i; i < 2; i++) {//нас интересует вторая строчка, поэтому цикл только сработает дважды
 					std::getline(fin, spec);//считываем строчку, но т.к. первая строчка - пароль, то ее просто считаем вникуда
 					if (i == 1) {//а вот на второй итерации - специальность - то что нужно
 						std::cout << spec << std::endl; //выводим ее 
 					}
 				}
+					fin.close();
+					i = 0;
 			}
 		}
 	}
