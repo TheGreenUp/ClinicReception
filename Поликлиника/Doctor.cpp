@@ -158,7 +158,9 @@ void Doctor::changeRecordDate()
 {
 	showTimeTable();//сначала выводим расписание
 	int chosenDate;
-	std::cout << "Выберите время, которое хотите изменить:\n";	std::cin >> chosenDate;
+	std::cout << "Выберите время, которое хотите изменить:\n";
+
+	chosenDate = checkRecordDataInput();
 
 	FileManager fm; User user;//юзер только для записи в файл
 	std::ifstream fin;//поток записи
@@ -396,6 +398,19 @@ void Doctor::showByName(std::string name)
 	}
 }
 
+int Doctor::checkRecordDataInput()
+{
+	int chosenDate;
+	std::cout << "Выберите удобную дату: ";
+	while (!(std::cin >> chosenDate) || std::cin.get() != '\n' || chosenDate < 1 || chosenDate > 10)
+	{
+		std::cout << "Введите числовое значение [1;10]: ";
+		std::cin.clear();
+		while (std::cin.get() != '\n');
+
+	}
+	return chosenDate;
+}
 
 
 void Doctor::serveNextClient()

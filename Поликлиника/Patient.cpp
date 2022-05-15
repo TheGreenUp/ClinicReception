@@ -131,6 +131,8 @@ int Patient::checkDataInput()
 	{
 		std::cout << "Введите числовое значение [1;10]: ";
 		std::cin.clear();
+		while (std::cin.get() != '\n');
+
 	}
 	return chosenDate;
 }
@@ -143,6 +145,7 @@ int Patient::checkChosenDoctorInput(std::vector<std::string> doctorVector) {
 	{
 		std::cout << "Неверный ввод! ";
 		std::cin.clear();
+		while (std::cin.get() != '\n');
 	}
 	return chosenDate;
 }
