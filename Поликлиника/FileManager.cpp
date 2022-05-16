@@ -67,7 +67,8 @@ std::vector<std::string> FileManager::getDoctorsNames()
 	std::vector<std::string> doctorsNames; //массив имен докторов
 	std::string tempStr;
 	std::string inputPath = "Doctors";        // путь к папке с файлами
-	fs::path path;
+	//fs::path path;
+	std::filesystem::path path;
 
 
 	for (auto& p : fs::directory_iterator(inputPath)) //при помощи этой команды читаем названия всех файлов, лежащих в inputPath
