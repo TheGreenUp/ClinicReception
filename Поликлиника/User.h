@@ -24,7 +24,7 @@ public:
 	void putInfoIntoFilePatient();//Записать данные пациента в файл
 	void checkUserInput(int& user_option);//Проверка на числовой ввод
 	std::string encryptPassword(std::string password); //шифрование пароля в файле
-	int decryptPassword(std::string password);
-	int hidePasswordInput();
+	int decryptPassword(std::string password);//расшифровать пароль (можно и без него)
+	int hidePasswordInput();//звездочки вместо цифр при вводе пароля
 };
 

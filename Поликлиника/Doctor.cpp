@@ -397,7 +397,6 @@ void Doctor::showByName(std::string name)
 		std::cout << "Нет клиентов с таким именем!\n";
 	}
 }
-
 int Doctor::checkRecordDataInput()
 {
 	int chosenDate;
@@ -411,7 +410,6 @@ int Doctor::checkRecordDataInput()
 	}
 	return chosenDate;
 }
-
 
 void Doctor::serveNextClient()
 {
@@ -441,6 +439,7 @@ void Doctor::serveNextClient()
 	std::string wordInRecord;
 	std::string tempDate;
 
+	this->showTimeTable();
 
 	fm.createDoctorDir(this->getName());
 	fin.open(fm.getDoctorDir());

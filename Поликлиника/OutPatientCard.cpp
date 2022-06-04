@@ -5,11 +5,6 @@ void OutPatientCard::AddConclusion(std::string conclusion)
 	this->conclusion = conclusion;
 }
 
-void OutPatientCard::getInfoFromFile()
-{
-
-}
-
 void OutPatientCard::PutInfoIntoFile(Talon talon, std::string path)
 {
 	std::ofstream fout;

@@ -17,5 +17,4 @@ public:
 	~SmartPointer();
 	SmartPointer& operator=(const SmartPointer&); //перегрузка оператора =
 	T* operator->() const; // перегрузка оператора ->
-	void showCounter();
 };

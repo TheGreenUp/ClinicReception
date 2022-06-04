@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <Windows.h>
+#include <algorithm>
 
 
 bool Patient::showTalons()
@@ -63,6 +64,7 @@ bool Patient::Login()
 {
 	FileManager fmanager;//для проверки путя
 	int enetered_password = 0, try_repeat = 0, quit = 1;
+	bool succesEnterName = false;
 	int successLogin = 0;//повторный ввод пользователем логина
 	std::string entered_name, real_password_string;
 	std::ifstream fin;
@@ -73,7 +75,18 @@ bool Patient::Login()
 
 			std::cout << "====================================";
 			std::cout << "\nВведите ФИО: ";
-			std::getline(std::cin, entered_name);
+			while (!succesEnterName) {
+				std::getline(std::cin, entered_name);
+				try {
+					if (entered_name.size() == 0) throw MyException("Неверный ввод, длина строки = ", entered_name.size());
+					succesEnterName = true;
+				}
+				catch (MyException& ex) {
+					ex.what();
+					std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+				}
+			}
+
 			fmanager.createClientDir(entered_name);
 			fin.open(fmanager.getClientDir());
 			try
@@ -103,7 +116,7 @@ bool Patient::Login()
 	std::getline(fin, real_password_string); //считывание первой строки из файла, которая является паролем
 	while (quit)
 	{
-		std::cout << "Введите пароль [максимум 8 символов]: ";
+		std::cout << "Введите пароль: ";
 		enetered_password = User::hidePasswordInput();
 		//User::checkUserInput(enetered_password); //ввод пароля
 		if (enetered_password == User::decryptPassword(real_password_string)) {
@@ -127,7 +140,7 @@ int Patient::checkDataInput()
 {
 	int chosenDate;
 	std::cout << "Выберите удобную дату: ";
-		while (!(std::cin >> chosenDate) || std::cin.get() != '\n' || chosenDate < 1 || chosenDate > 10)
+	while (!(std::cin >> chosenDate) || std::cin.get() != '\n' || chosenDate < 1 || chosenDate > 10)
 	{
 		std::cout << "Введите числовое значение [1;10]: ";
 		std::cin.clear();
@@ -256,26 +269,26 @@ void Patient::deleteTalonFromFile() {
 					}
 					}
 				}
-					isSpecSymbol = false;
+				isSpecSymbol = false;
 			}
-				doctor.changeRecordByPatient(date, time, doctorName);
-				stringNumber++;
-				continue;
-			}
-			else {
-				buff.push_back(tempDate);
-				stringNumber++;
+			doctor.changeRecordByPatient(date, time, doctorName);
+			stringNumber++;
+			continue;
+		}
+		else {
+			buff.push_back(tempDate);
+			stringNumber++;
 
-			}
 		}
-		fout.close();
-		std::ofstream fin;
-		fin.open(fm.getClientDir());
-		for (int i = 0; i < buff.size(); i++) {
-			fin << buff[i] << std::endl;
-		}
-		fin.close();
 	}
+	fout.close();
+	std::ofstream fin;
+	fin.open(fm.getClientDir());
+	for (int i = 0; i < buff.size(); i++) {
+		fin << buff[i] << std::endl;
+	}
+	fin.close();
+}
 
 void Patient::deleteTalonFromFile(int chosenTalon) {
 	std::ifstream fout;
@@ -331,14 +344,14 @@ void Patient::showOutPatientCard() {
 
 	fm.createOutPatientCardDir(this->getName());
 	path = fm.getOutPatientCardDir();
-	fin.open(path); 
+	fin.open(path);
 
 	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня 
 		std::cout << tempDate << std::endl;
 		isData = true;
 	}
 	fin.close();
-	if (!isData) std::cout << "Нет записей!\n";	
+	if (!isData) std::cout << "Нет записей!\n";
 }
 
 void Patient::SortTalonByDate()
@@ -346,26 +359,37 @@ void Patient::SortTalonByDate()
 
 	FileManager fm;
 	std::ifstream fin;//поток вывода из файлa
+	std::ofstream fout;//поток вывода из файлa
 
 	int stringNumber = 0; //номер строчки в фале
-	int dateNumber = 1; //номер строчки в фале
-	int stringTalonSize = 0;
-	int numberOfSymbolsInTalon = 0; //итератор для проверки на то, кончился ли талон
 
 	std::string tempDate;
-	std::string talonString;
+
 
 	std::vector<std::string> buff;
-
-	bool areRecordsInFile = false;
-
+	std::vector<std::string> talonBuff;
 
 	fm.createClientDir(this->getName());
 	fin.open(fm.getClientDir());
 
 	for (int n; std::getline(fin, tempDate); ) { //пишем такую строчку, пушо писать через while (fin.eof()) - херня
-		buff.push_back(tempDate);
+		if (stringNumber == 0) buff.push_back(tempDate);
+		else {
+			talonBuff.push_back(tempDate);
 		}
-	
+		stringNumber++;
+	}
+
+
+	std::sort(talonBuff.begin(), talonBuff.end());
+
+	for (auto i : talonBuff) {
+		buff.push_back(i);
+	}
+
+	fout.open(fm.getClientDir());
+	for (auto i : buff) {//сокращенная запись цикла для каждого элемента
+		fout << i << std::endl;
+	}
 }
 

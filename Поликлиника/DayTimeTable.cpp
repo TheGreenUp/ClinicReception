@@ -49,8 +49,9 @@ void DayTimeTable::GetInfoFromFile(std::string nameOfChosenDoctor)
 	}
 }
 
-void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName,std::string patientName, std::string problemDescription, std::string &justDate, std::string& spec)
+void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName, std::string patientName, std::string problemDescription, std::string& justDate, std::string& spec)
 {
+#pragma region Variables
 
 	std::vector<std::string> buff; //записываем весь файл сюда
 	FileManager fm; User user; //user Ќужен только дл€ записи в файл
@@ -59,18 +60,19 @@ void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName,std::st
 	int stringNumber = 0; //номер строчки в фале
 	std::string tempDate;
 	std::string changedDate;
+#pragma endregion
 
+#pragma region FileWork
 	fm.createDoctorDir(doctorName);
 	fin.open(fm.getDoctorDir());
-
 	for (int n; std::getline(fin, tempDate); ) {//так же как и в ситуации с чтением из файла расписани€ - в for мы и считываем, а чекаем на конец файла после цикла
-		buff.insert(buff.begin()+stringNumber, tempDate);//записываем все данные в буферную переменную
+		buff.insert(buff.begin() + stringNumber, tempDate);//записываем все данные в буферную переменную
 		if (stringNumber == 1) spec = tempDate; //выхватываем специальность
 		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
 			if (stringNumber - 1 == chosenDate) { // в файле така€ структура 1. пароль 2. специальность 3 и далее - расписание, поэтому отнимаем три
 				tempDate.erase(21, 100); //удал€ем "—вободно"
 				justDate = tempDate;
-				tempDate +=  "«ан€то | " + patientName + " | " + problemDescription + " |"; //мен€ем на "зан€то + им€ + проблема"
+				tempDate += "«ан€то | " + patientName + " | " + problemDescription + " |"; //мен€ем на "зан€то + им€ + проблема"
 				changedDate = tempDate;
 			}
 		}
@@ -78,6 +80,8 @@ void DayTimeTable::BookChosenTime(int chosenDate, std::string doctorName,std::st
 	}
 	buff[chosenDate + 1] = changedDate;
 	fin.close();//закрываем
+#pragma endregion
+
 	user.putInfoIntoFileDoctor(doctorName, buff);//перезаписываем
 
 }
@@ -97,7 +101,7 @@ bool DayTimeTable::checkIsFree(int chosenDate, std::string doctorName) {
 		if (stringNumber > 1) {//а вот на третьей и всех последущих итераций - расписание - то что нужно
 			if (stringNumber - 2 == chosenDate) { // в файле така€ структура: 1. пароль 2. специальность 3 и далее - расписание, поэтому отнимаем три
 				int pos = tempDate.find("«ан€то"); //интова€ позици€ в файле
-			if (pos != -1) {//если найдено слово "зан€то", то ретерним false
+				if (pos != -1) {//если найдено слово "зан€то", то ретерним false
 					fin.close();
 					return false;
 				}

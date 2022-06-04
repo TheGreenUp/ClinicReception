@@ -59,7 +59,7 @@ void User::putInfoIntoFileDoctor(std::string spec) {
 	out.open(path); // окрываем файл для записи
 	if (out.is_open())
 	{
-		out <<	encryptPassword(std::to_string(this->password)) << std::endl;//вписываем пароль
+		out << encryptPassword(std::to_string(this->password)) << std::endl;//вписываем пароль
 		out << spec << std::endl;//специальность
 		for (int i = 0; i < 10; i++) {
 			out << timetable[i] << std::endl; //стандартный таймтейбл
@@ -96,17 +96,24 @@ std::string User::encryptPassword(std::string password) {
 }
 int User::hidePasswordInput()
 {
-	std::string password = "";
-	char ch = 0;
-	while (ch != 13 && password.size() < 9) {//character 13 is enter && максимальная длина пароля - 8 символов
-		ch = _getch();
-		if (ch > 47 && ch < 58) {//с 48 по 57 находятся ASCII коды цифр
-		password.push_back(ch);
-		std::cout << '*';
+	while (true) {
+		std::string password = "";
+		char ch = 0;
+		while (ch != 13 && password.size() < 9) {//character 13 is enter && максимальная длина пароля - 8 символов
+			ch = _getch();
+			if (ch > 47 && ch < 58) {//с 48 по 57 находятся ASCII коды цифр
+				password.push_back(ch);
+				std::cout << '*';
+			}
+		}
+		try {
+			std::cout << std::endl;
+			return std::stol(password);
+		}
+		catch (std::exception& ex) {
+			std::cout << "Длина пароля меньше нуля! Повторите ввод: ";
 		}
 	}
-	std::cout << std::endl;
-	return std::stol(password);
 }
 int User::decryptPassword(std::string password) {
 	for (int i = 0; (i < password.size() && password[i] != '\0'); i++) {
